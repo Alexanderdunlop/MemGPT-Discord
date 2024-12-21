@@ -14,6 +14,7 @@ from langchain_core.messages.utils import get_buffer_string
 import tiktoken
 from dotenv import load_dotenv
 import os
+from langchain_core.messages import AIMessage
 
 load_dotenv()
 
@@ -42,10 +43,12 @@ def should_continue(state):
     """
     messages = state["messages"]
     last_message = messages[-1]
-    if not last_message.tool_calls:
-        return "end"
-    else:
+    if not isinstance(last_message, AIMessage):
+        raise TypeError(f"Expected AIMessage, got {type(last_message)}")
+    if last_message.tool_calls:
         return "continue"
+    else:
+        return "end"
 
 
 system_prompt = (
@@ -96,7 +99,7 @@ system_prompt = (
     "Current system time: {current_time}\n\n",
 )
 
-def call_model(state: AgentState):
+async def acall_model(state: AgentState):
     """Process the current state and generate a response using the LLM."""
 
     messages = state["messages"]
@@ -121,7 +124,7 @@ def call_model(state: AgentState):
 
     messages = [{"role": "system", "content": formatted_system_prompt}] + messages
     model = _get_model()
-    response = model.invoke(messages)
+    response = await model.ainvoke(messages)
     return {"messages": [response]}
 
 def load_memories(state: AgentState, config: RunnableConfig) -> AgentState:

@@ -3,6 +3,7 @@ from typing import List
 from langgraph.graph import add_messages
 from langchain_core.messages import AnyMessage
 from typing import TypedDict, Annotated
+from langgraph.managed import RemainingSteps
 
 class AgentState(TypedDict):
     messages: Annotated[List[AnyMessage], add_messages]
@@ -11,3 +12,5 @@ class AgentState(TypedDict):
     """The core memories associated with the user."""
     recall_memories: List[str]
     """The recall memories retrieved for the current context."""
+    remaining_steps: RemainingSteps
+    """Remaining steps in the agent workflow."""
