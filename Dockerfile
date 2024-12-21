@@ -15,4 +15,4 @@ COPY . .
 RUN poetry install --no-interaction --no-ansi
 
 # Run the application
-CMD ["poetry", "run", "main.py", "--host", "0.0.0.0", "--port", "8000"]
+CMD ["poetry", "run", "python main.py", "--host", "0.0.0.0", "--port", "8000"]
